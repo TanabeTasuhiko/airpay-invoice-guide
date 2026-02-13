@@ -84,6 +84,7 @@
   }
   .part-header.credit { background: linear-gradient(135deg, #0066cc, #0099ff); color: white; }
   .part-header.qr { background: linear-gradient(135deg, #e65100, #ff9800); color: white; }
+  .part-header.freee { background: linear-gradient(135deg, #2e7d32, #66bb6a); color: white; }
   .part-header h2 { font-size: 1.6em; margin-bottom: 5px; }
   .part-header p { opacity: 0.9; }
 
@@ -98,6 +99,7 @@
   }
   .step-header.credit { background: #0066cc; }
   .step-header.qr { background: #e65100; }
+  .step-header.freee { background: #2e7d32; }
   .step-number {
     background: white; width: 45px; height: 45px;
     border-radius: 50%; display: flex; align-items: center;
@@ -105,6 +107,7 @@
   }
   .step-number.credit { color: #0066cc; }
   .step-number.qr { color: #e65100; }
+  .step-number.freee { color: #2e7d32; }
   .step-header h3 { font-size: 1.3em; }
   .step-body { padding: 25px 30px; }
   .step-body ol { padding-left: 25px; }
@@ -117,6 +120,8 @@
   .url-box a:hover { text-decoration: underline; }
   .url-box.qr { background: #fff3e0; border-color: #ffcc80; }
   .url-box.qr a { color: #e65100; }
+  .url-box.freee { background: #e8f5e9; border-color: #a5d6a7; }
+  .url-box.freee a { color: #2e7d32; }
   .tip {
     background: #e8f5e9; border-left: 4px solid #4caf50;
     padding: 12px 18px; margin: 15px 0; border-radius: 0 8px 8px 0;
@@ -199,6 +204,7 @@
   }
   .flow-step.credit { background: #0066cc; }
   .flow-step.qr { background: #e65100; }
+  .flow-step.freee { background: #2e7d32; }
   .flow-arrow { font-size: 1.3em; color: #666; }
 
   /* Contact & Links */
@@ -266,6 +272,7 @@
       <li><a href="#prep">始める前の確認</a></li>
       <li>🔵 <a href="#part-a">Part A：クレジットカード決済のインボイス取得（5ステップ）</a></li>
       <li>🟠 <a href="#part-b">Part B：QRコード決済のインボイス取得（4ステップ）</a></li>
+      <li>🟢 <a href="#part-c">Part C：freee会計での経理処理（Airレジ連携）</a></li>
       <li><a href="#ng">やってはいけないこと</a></li>
       <li><a href="#faq">よくある質問（Q&amp;A）</a></li>
       <li><a href="#contact">困ったときは？</a></li>
@@ -582,6 +589,158 @@
     <p style="margin-top: 15px;"><strong>両方のファイルを保管すれば完了です！</strong></p>
   </div>
 
+  <!-- ================================================ -->
+  <!--  Part C: freee会計での経理処理                    -->
+  <!-- ================================================ -->
+  <div class="part-header freee" id="part-c">
+    <h2>🟢 Part C：freee会計での経理処理</h2>
+    <p>Airレジ × freee会計を連携している事業者向け</p>
+  </div>
+
+  <div class="intro-box" style="border-left: 4px solid #2e7d32;">
+    <h2 style="color: #2e7d32; border-color: #2e7d32;">このパートの対象者</h2>
+    <p>Airレジとfreee会計を連携して経理処理を行っている事業者向けの手順です。<br>
+    Airレジ連携により、売上データがfreee会計に<strong>自動登録</strong>されるため、<br>
+    入金時の<strong>消込処理（売掛金の入金処理）</strong>が主な作業になります。</p>
+  </div>
+
+  <!-- C-1 -->
+  <div class="step">
+    <div class="step-header freee">
+      <div class="step-number freee">C1</div>
+      <h3>Airレジとfreee会計の連携を確認する</h3>
+    </div>
+    <div class="step-body">
+      <p>まだ連携していない場合は、以下の3ステップで連携します：</p>
+      <ol>
+        <li><strong>Airマーケット</strong>からfreee会計の連携ページを開く
+          <div class="url-box freee">
+            <a href="https://market.airregi.jp/service/details/00008" target="_blank">https://market.airregi.jp/service/details/00008</a>
+          </div>
+        </li>
+        <li>「Airレジと連携する」をクリック → freee会計にログイン → <strong>「許可する」</strong>をクリック</li>
+        <li>Airレジの設定画面で、売上を計上する<strong>freee会計の事業所</strong>を選択して保存</li>
+      </ol>
+      <div class="tip">
+        💡 freee会計のアカウント権限は<strong>「一般」以上</strong>かつ<strong>「すべての口座と部門にアクセスできるグループ」</strong>である必要があります
+      </div>
+    </div>
+  </div>
+
+  <!-- C-2 -->
+  <div class="step">
+    <div class="step-header freee">
+      <div class="step-number freee">C2</div>
+      <h3>自動登録される売上データを理解する</h3>
+    </div>
+    <div class="step-body">
+      <p>Airレジ連携後、営業日が終わると<strong>自動的に売上データがfreee会計に登録</strong>されます。</p>
+      <h4 style="margin: 15px 0 10px;">自動登録のルール：</h4>
+      <table class="option-table">
+        <tr><th>決済手段</th><th>決済状況</th><th>勘定科目</th></tr>
+        <tr><td>現金</td><td>決済済み</td><td>売上高（現金）</td></tr>
+        <tr><td>クレジットカード（Airペイ）</td><td>未決済（売掛金）</td><td>売上高 → 入金時に消込</td></tr>
+        <tr><td>QRコード決済（Airペイ QR）</td><td>未決済（売掛金）</td><td>売上高 → 入金時に消込</td></tr>
+      </table>
+      <div class="keyword">
+        <strong>ポイント：</strong>クレジットカード・QRコード決済は、売上時点では<strong>「未決済」（売掛金）</strong>として登録されます。後日、銀行口座に入金された時に<strong>「消込」</strong>処理を行います。
+      </div>
+      <p style="margin-top: 15px;">自動登録される内容：</p>
+      <ul style="margin: 10px 0 10px 25px;">
+        <li><strong>税区分</strong>：Airレジの税率設定に応じて自動適用</li>
+        <li><strong>品目</strong>：「【Airレジ】○○」の形式で自動生成</li>
+        <li><strong>部門</strong>：複数店舗の場合、店舗ごとに紐付け可能</li>
+        <li><strong>決済期日</strong>：Airペイ・Airペイ QRの振込予定日が連携</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- C-3 -->
+  <div class="step">
+    <div class="step-header freee">
+      <div class="step-number freee">C3</div>
+      <h3>銀行口座への入金を確認する</h3>
+    </div>
+    <div class="step-body">
+      <p>Airペイ / Airペイ QR から銀行口座に入金があったら、freee会計で確認します。</p>
+      <ol>
+        <li>freee会計にログイン</li>
+        <li>「口座」メニュー → 連携している<strong>銀行口座</strong>を開く</li>
+        <li>Airペイからの入金明細を確認</li>
+      </ol>
+      <div class="intro-box" style="border-left: 4px solid #2e7d32; margin: 15px 0;">
+        <h2 style="color: #2e7d32; border-color: #2e7d32; font-size: 1.1em;">💡 通帳・明細での入金元の見分け方</h2>
+        <table class="option-table">
+          <tr><th>入金元の表記</th><th>内容</th></tr>
+          <tr><td><strong>Airペイ（クレジット）からの入金</strong></td><td>Airペイのクレジットカード決済分</td></tr>
+          <tr><td style="font-family: monospace;"><strong>AIRﾍﾟｲQR/ｶ)ﾃﾞｲ-ｼﾞ-ﾌｲﾅﾝｼﾔﾙﾃｸﾉﾛｼﾞ-</strong></td><td>Airペイ QR のQRコード決済分<br><span style="color:#888;">（DGフィナンシャルテクノロジー社経由）</span></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- C-4 -->
+  <div class="step">
+    <div class="step-header freee">
+      <div class="step-number freee">C4</div>
+      <h3>未決済取引の消込を行う（売掛金 → 入金処理）</h3>
+    </div>
+    <div class="step-body">
+      <p>銀行口座にAirペイからの入金があったら、freee会計で<strong>未決済取引の消込</strong>を行います。</p>
+      <ol>
+        <li>freee会計の<strong>「自動で経理」</strong>画面を開く</li>
+        <li>銀行口座の入金明細の中から、Airペイ / Airペイ QR の入金を見つける</li>
+        <li><strong>「未決済取引の消込」</strong>を選択</li>
+        <li>対応する未決済の売上取引（売掛金）を選んで紐付ける</li>
+        <li><strong>「登録」</strong>をクリックして消込完了</li>
+      </ol>
+      <div class="tip">
+        💡 Airレジ連携では、売上取引に<strong>「決済期日」（振込予定日）</strong>が自動設定されています。<br>
+        「期日」で絞り込むと、同じ振込日の複数の未決済取引をまとめて消込できます。
+      </div>
+      <div class="keyword">
+        <strong>消込とは？</strong><br>
+        「売掛金（まだもらっていないお金）」と「銀行口座への実際の入金」を紐付けて、<br>
+        「このお金はちゃんと回収できたよ」と帳簿上で確認する処理のことです。
+      </div>
+    </div>
+  </div>
+
+  <!-- C-5 -->
+  <div class="step">
+    <div class="step-header freee">
+      <div class="step-number freee">C5</div>
+      <h3>取得したインボイスをfreee会計に保管する</h3>
+    </div>
+    <div class="step-body">
+      <p>Part A・Part B でダウンロードしたインボイス（CSV / PDF）は、freee会計のファイルボックスに保管できます。</p>
+      <ol>
+        <li>freee会計の<strong>「ファイルボックス」</strong>を開く</li>
+        <li>ダウンロードしたインボイスファイルをアップロード</li>
+        <li>対応する取引に紐付けて保管</li>
+      </ol>
+      <div class="tip">
+        💡 freee会計は<strong>電子帳簿保存法</strong>に対応しているため、ファイルボックスに保管すれば法的要件を満たせます
+      </div>
+    </div>
+  </div>
+
+  <div class="completion-check">
+    <h2>✅ Part C 完了！</h2>
+    <p>freee会計での経理処理も完了です。</p>
+  </div>
+
+  <!-- freee連携の注意事項 -->
+  <div class="intro-box" style="border-left: 4px solid #ff9800;">
+    <h2 style="color: #e65100; border-color: #e65100;">⚠️ freee × Airレジ連携の注意事項</h2>
+    <ul style="margin: 10px 0 0 20px;">
+      <li><strong>連携前のデータは非対応</strong>：連携開始前の過去データはCSVで手動登録が必要です</li>
+      <li><strong>手数料の日付ズレ</strong>：決済データと手数料データの集計期間が異なり、日付がズレる場合があります</li>
+      <li><strong>1店舗1部門</strong>：1つの店舗を複数の部門に分割することはできません</li>
+      <li><strong>勘定科目の制限に注意</strong>：freee会計で勘定科目と品目の組み合わせを制限している場合、Airレジからの取引が登録できないことがあります。制限を解除するか、Airレジ品目を追加してください</li>
+    </ul>
+  </div>
+
   <!-- やってはいけないこと -->
   <div class="ng-section" id="ng">
     <h2>⚠️ やってはいけないこと ⚠️</h2>
@@ -665,6 +824,18 @@
       <span class="flow-arrow">→</span>
       <span class="flow-step qr">B4 PDF出力</span>
     </div>
+    <h3 style="color: #2e7d32;">🟢 Part C：freee会計での経理処理（5ステップ）</h3>
+    <div class="flow">
+      <span class="flow-step freee">C1 連携確認</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step freee">C2 自動登録</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step freee">C3 入金確認</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step freee">C4 消込処理</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step freee">C5 保管</span>
+    </div>
   </div>
 
   <!-- 問い合わせ -->
@@ -690,6 +861,14 @@
       <li>📎 <a href="https://cl.mp.airregi.jp/air_login" target="_blank">Airペイ QR 管理画面ログイン（AirID）</a></li>
       <li>📎 <a href="https://faq.mp.airregi.jp/hc/ja/articles/235254048" target="_blank">Airペイ QR FAQ - 入金金額の確認方法</a></li>
       <li>📎 <a href="https://faq.mp.airregi.jp/hc/ja/articles/23189760203033" target="_blank">Airペイ QR FAQ - インボイス制度対応について</a></li>
+    </ul>
+    <h3>🟢 freee会計 × Airレジ連携</h3>
+    <ul>
+      <li>📎 <a href="https://market.airregi.jp/service/details/00008" target="_blank">Airマーケット - freee会計連携ページ</a></li>
+      <li>📎 <a href="https://faq.airregi.jp/hc/ja/articles/202919500" target="_blank">Airレジ FAQ - freee会計との連携方法</a></li>
+      <li>📎 <a href="https://faq.airregi.jp/hc/ja/articles/9815674441113" target="_blank">Airレジ FAQ - freee会計に自動登録される取引データ</a></li>
+      <li>📎 <a href="https://support.freee.co.jp/hc/ja/articles/202847600" target="_blank">freeeヘルプ - Airレジ売上データの取り込み</a></li>
+      <li>📎 <a href="https://support.freee.co.jp/hc/ja/articles/203317600" target="_blank">freeeヘルプ - 未決済取引の消込（売掛金の入金処理）</a></li>
     </ul>
     <h3>その他</h3>
     <ul>
