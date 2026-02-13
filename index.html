@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>エアペイ（AirPay）からインボイスを取得する方法</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    background: #f0f4f8;
+    color: #333;
+    line-height: 1.8;
+  }
+  .header {
+    background: linear-gradient(135deg, #0066cc, #0099ff);
+    color: white;
+    text-align: center;
+    padding: 50px 20px;
+  }
+  .header h1 {
+    font-size: 2.2em;
+    margin-bottom: 10px;
+  }
+  .header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .intro-box {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin: 30px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .intro-box h2 {
+    color: #0066cc;
+    font-size: 1.4em;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #0066cc;
+    padding-bottom: 8px;
+  }
+  .intro-box .keyword {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 15px 20px;
+    margin: 15px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .checklist {
+    background: #e8f5e9;
+    border-radius: 12px;
+    padding: 25px 30px;
+    margin: 30px 0;
+  }
+  .checklist h2 {
+    color: #2e7d32;
+    margin-bottom: 15px;
+  }
+  .checklist ul {
+    list-style: none;
+    padding: 0;
+  }
+  .checklist ul li {
+    padding: 8px 0;
+    padding-left: 30px;
+    position: relative;
+  }
+  .checklist ul li::before {
+    content: '✅';
+    position: absolute;
+    left: 0;
+  }
+  .warning-box {
+    background: #fff3e0;
+    border: 2px solid #ff9800;
+    border-radius: 12px;
+    padding: 20px 25px;
+    margin: 20px 0;
+    text-align: center;
+  }
+  .warning-box .icon { font-size: 1.5em; }
+  .warning-box strong { color: #e65100; }
+
+  /* Step cards */
+  .step {
+    background: white;
+    border-radius: 16px;
+    margin: 30px 0;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+  }
+  .step-header {
+    background: #0066cc;
+    color: white;
+    padding: 18px 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .step-number {
+    background: white;
+    color: #0066cc;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4em;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  .step-header h3 {
+    font-size: 1.3em;
+  }
+  .step-body {
+    padding: 25px 30px;
+  }
+  .step-body ol {
+    padding-left: 25px;
+  }
+  .step-body ol li {
+    padding: 8px 0;
+    font-size: 1.05em;
+  }
+  .step-body .url-box {
+    background: #e3f2fd;
+    border: 1px solid #90caf9;
+    border-radius: 8px;
+    padding: 12px 18px;
+    margin: 10px 0;
+    font-family: monospace;
+    font-size: 1em;
+    word-break: break-all;
+  }
+  .step-body .url-box a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .step-body .url-box a:hover { text-decoration: underline; }
+  .step-body .tip {
+    background: #e8f5e9;
+    border-left: 4px solid #4caf50;
+    padding: 12px 18px;
+    margin: 15px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .screenshot {
+    margin: 20px 0;
+    text-align: center;
+  }
+  .screenshot img {
+    max-width: 100%;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  }
+  .screenshot .caption {
+    margin-top: 8px;
+    color: #666;
+    font-size: 0.9em;
+  }
+  .highlight-box {
+    background: #fce4ec;
+    border: 3px solid #e91e63;
+    border-radius: 12px;
+    padding: 20px 25px;
+    margin: 20px 0;
+    text-align: center;
+  }
+  .highlight-box .big {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #c62828;
+  }
+  .option-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+  }
+  .option-table th, .option-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  .option-table th {
+    background: #f5f5f5;
+    font-weight: bold;
+  }
+  .option-table .correct {
+    background: #e8f5e9;
+    font-weight: bold;
+  }
+  .option-table .correct td { color: #2e7d32; }
+  .option-table .wrong td { color: #999; }
+
+  /* NG section */
+  .ng-section {
+    background: #ffebee;
+    border-radius: 16px;
+    padding: 30px;
+    margin: 30px 0;
+  }
+  .ng-section h2 {
+    color: #c62828;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5em;
+  }
+  .ng-item {
+    background: white;
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 12px 0;
+    border-left: 4px solid #e53935;
+  }
+  .ng-item .ng-title {
+    font-weight: bold;
+    color: #c62828;
+    font-size: 1.05em;
+  }
+  .ng-item .ng-desc { margin-top: 5px; color: #555; }
+
+  /* FAQ */
+  .faq-section {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    margin: 30px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .faq-section h2 {
+    color: #0066cc;
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.5em;
+  }
+  .faq-item {
+    border-bottom: 1px solid #eee;
+    padding: 18px 0;
+  }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-item .q {
+    font-weight: bold;
+    color: #0066cc;
+    font-size: 1.05em;
+    margin-bottom: 8px;
+  }
+  .faq-item .a { color: #555; padding-left: 20px; }
+
+  /* Summary & Footer */
+  .summary {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    border-radius: 16px;
+    padding: 30px;
+    margin: 30px 0;
+    text-align: center;
+  }
+  .summary h2 { color: #333; margin-bottom: 20px; font-size: 1.4em; }
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 20px 0;
+  }
+  .flow-step {
+    background: #0066cc;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 0.95em;
+  }
+  .flow-arrow { font-size: 1.3em; color: #666; }
+  .contact {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin: 30px 0;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .contact h2 { color: #0066cc; margin-bottom: 15px; }
+  .contact .phone {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #0066cc;
+    margin: 10px 0;
+  }
+  .links {
+    background: white;
+    border-radius: 12px;
+    padding: 25px 30px;
+    margin: 30px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .links h2 { color: #0066cc; margin-bottom: 15px; }
+  .links ul { list-style: none; padding: 0; }
+  .links ul li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .links ul li:last-child { border-bottom: none; }
+  .links a { color: #0066cc; text-decoration: none; }
+  .links a:hover { text-decoration: underline; }
+  .footer {
+    text-align: center;
+    padding: 30px;
+    color: #999;
+    font-size: 0.85em;
+  }
+</style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<div class="header">
+  <h1>エアペイ（AirPay）から<br>インボイスを取得する方法</h1>
+  <p>〜 だれでもわかるカンタン手順書 〜</p>
+</div>
+
+<div class="container">
+
+  <!-- はじめに -->
+  <div class="intro-box">
+    <h2>この手順書でできること</h2>
+    <p>エアペイ（AirPay）の管理画面から<strong>「インボイス（適格請求書）」</strong>をCSVファイルでダウンロードする方法を、ステップごとにやさしく説明します。</p>
+    <div class="keyword">
+      <strong>インボイスとは？</strong><br>
+      2023年10月から始まった「インボイス制度」に対応した正式な請求書のこと。<br>
+      確定申告や経理処理で必要になります。
+    </div>
+  </div>
+
+  <!-- 準備チェック -->
+  <div class="checklist">
+    <h2>始める前に確認しよう！</h2>
+    <ul>
+      <li><strong>パソコン</strong>（Windows でも Mac でもOK）</li>
+      <li><strong>インターネット接続</strong></li>
+      <li>Airペイの <strong>「AirID（メールアドレス）」</strong> と <strong>「パスワード」</strong></li>
+    </ul>
+  </div>
+
+  <div class="warning-box">
+    <span class="icon">⚠️</span><br>
+    <strong>CSVダウンロードはパソコン専用の機能です！</strong><br>
+    iPad や iPhone からはダウンロードできません。
+  </div>
+
+  <!-- 手順1 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">1</div>
+      <h3>管理画面にログインする</h3>
+    </div>
+    <div class="step-body">
+      <ol>
+        <li>パソコンのブラウザ（Chrome、Edgeなど）を開きます</li>
+        <li>以下のURLにアクセスします：
+          <div class="url-box">
+            <a href="https://merchant.airpayment.jp/" target="_blank">https://merchant.airpayment.jp/</a>
+          </div>
+        </li>
+        <li><strong>「AirID（メールアドレス）」</strong>と<strong>「パスワード」</strong>を入力します</li>
+        <li><strong>「ログイン」</strong>ボタンをクリックします</li>
+      </ol>
+      <div class="tip">
+        💡 パスワードを忘れた場合 → 「パスワードをお忘れの方」リンクから再設定できます
+      </div>
+    </div>
+  </div>
+
+  <!-- 手順2 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">2</div>
+      <h3>「振込明細」画面を開く</h3>
+    </div>
+    <div class="step-body">
+      <ol>
+        <li>ログインすると、管理画面のトップページが表示されます</li>
+        <li>画面の<strong>上のほうにあるメニュー</strong>を見てください</li>
+        <li>その中から <strong>「振込明細」</strong> をクリックします</li>
+      </ol>
+      <p style="margin: 15px 0; color: #666;">メニューの並び順（参考）：取引履歴 ／ 取引集計 ／ 振込一覧 ／ <strong style="color:#0066cc;">振込明細</strong> ／ ...</p>
+      <div class="screenshot">
+        <img src="https://omisecash.com/wp-content/uploads/2024/05/1354745d0e338d3f48b09b68744a4338.png" alt="Airペイ管理画面 振込明細画面">
+        <div class="caption">▲ 管理画面で「振込明細」を開いた画面のイメージ</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 手順3 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">3</div>
+      <h3>ダウンロードしたい月を検索する</h3>
+    </div>
+    <div class="step-body">
+      <ol>
+        <li>画面上部の <strong>「振込月」</strong> のプルダウン（▼マーク）をクリック</li>
+        <li>ダウンロードしたい<strong>年と月</strong>を選びます（例：「2026年1月」）</li>
+        <li><strong>「検索」</strong>ボタンをクリック</li>
+        <li>選んだ月の振込明細が一覧で表示されます！</li>
+      </ol>
+      <div class="warning-box" style="border-color: #ff9800; background: #fff8e1;">
+        <span class="icon">💡</span><br>
+        「指定条件に該当する取引が見つかりませんでした」と出たら？<br>
+        → その月には振込データがありません。<strong>別の月を選び直して</strong>ください。
+      </div>
+    </div>
+  </div>
+
+  <!-- 手順4 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">4</div>
+      <h3>CSVファイルをダウンロードする</h3>
+    </div>
+    <div class="step-body">
+      <ol>
+        <li>検索結果が表示された画面で、<strong>右上あたり</strong>にある<strong>「CSV出力」</strong>ボタンをクリック</li>
+        <li>出力形式を選ぶ画面が表示されます</li>
+      </ol>
+
+      <div class="screenshot">
+        <img src="https://omisecash.com/wp-content/uploads/2024/05/a53a0024d818c2ce6cbf39f091aa0c9c.png" alt="CSV出力ボタンの位置">
+        <div class="caption">▲ 「CSV出力」ボタンの場所</div>
+      </div>
+
+      <h4 style="margin: 20px 0 10px;">出力形式の選び方：</h4>
+      <table class="option-table">
+        <tr>
+          <th>出力形式</th>
+          <th>インボイス対応</th>
+          <th>選ぶ？</th>
+        </tr>
+        <tr class="wrong">
+          <td>(a) 決済金額のみ</td>
+          <td>❌ 非対応</td>
+          <td>選ばない</td>
+        </tr>
+        <tr class="wrong">
+          <td>(b) 決済金額・手数料・振込金額</td>
+          <td>❌ 非対応</td>
+          <td>選ばない</td>
+        </tr>
+        <tr class="correct">
+          <td>⭐ (c) 全項目（インボイス／適格請求書）</td>
+          <td>✅ 対応</td>
+          <td>⭐ これ！</td>
+        </tr>
+        <tr class="wrong">
+          <td>(d) 全項目（2023年9月以前用）</td>
+          <td>❌ 古い形式</td>
+          <td>選ばない</td>
+        </tr>
+      </table>
+
+      <div class="highlight-box">
+        <span class="big">⭐ 必ず「全項目（インボイス／適格請求書）」を選んでください！ ⭐</span><br>
+        <span style="color:#555;">これだけがインボイス制度に対応しています</span>
+      </div>
+
+      <div class="screenshot">
+        <img src="https://omisecash.com/wp-content/uploads/2024/05/55acbfd9f808a76b2ec94f10ae3f453f.png" alt="CSV出力形式の選択肢">
+        <div class="caption">▲ 出力形式の選択画面イメージ</div>
+      </div>
+
+      <ol start="3">
+        <li><strong>「ダウンロード」</strong>をクリック → パソコンにCSVファイルが保存されます</li>
+      </ol>
+      <div class="tip">
+        💡 保存先は通常<strong>「ダウンロード」フォルダ</strong>です
+      </div>
+    </div>
+  </div>
+
+  <!-- 手順5 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-number">5</div>
+      <h3>ダウンロードしたファイルを確認する</h3>
+    </div>
+    <div class="step-body">
+      <ol>
+        <li>パソコンの<strong>「ダウンロード」フォルダ</strong>を開きます</li>
+        <li>CSVファイルを<strong>ダブルクリック</strong>すると、Excel や Googleスプレッドシートで開けます</li>
+        <li>以下の項目が含まれていれば成功です！</li>
+      </ol>
+      <ul style="margin: 15px 0 15px 25px;">
+        <li>振込日</li>
+        <li>利用年月日</li>
+        <li>決済ブランド（Visa、Mastercard など）</li>
+        <li>決済金額・手数料・振込金額</li>
+        <li><strong>登録番号（インボイスの登録番号）</strong></li>
+        <li><strong>税率区分</strong></li>
+      </ul>
+      <div class="tip">
+        💡 文字化けする場合 → Excelで開くときに文字コードを<strong>「UTF-8」</strong>に指定するか、<strong>Googleスプレッドシート</strong>で開いてみてください
+      </div>
+    </div>
+  </div>
+
+  <!-- やってはいけないこと -->
+  <div class="ng-section">
+    <h2>⚠️ やってはいけないこと ⚠️</h2>
+    <div class="ng-item">
+      <div class="ng-title">❌ 画面をスクリーンショットで保存してインボイスとして使う</div>
+      <div class="ng-desc">画面の保存は「適格請求書」として認められません。必ずCSVファイルをダウンロードしてください。</div>
+    </div>
+    <div class="ng-item">
+      <div class="ng-title">❌ レシートをインボイスとして使う</div>
+      <div class="ng-desc">エアペイのレシートは「取引の控え」です。インボイス（適格請求書）としては使えません。</div>
+    </div>
+    <div class="ng-item">
+      <div class="ng-title">❌ ダウンロードしたCSVを捨てる</div>
+      <div class="ng-desc">電子取引データの保存は法律で義務付けられています。<strong>最低7年間</strong>は保管してください！</div>
+    </div>
+  </div>
+
+  <!-- よくある質問 -->
+  <div class="faq-section">
+    <h2>❓ よくある質問（Q&amp;A）</h2>
+
+    <div class="faq-item">
+      <div class="q">Q. iPad や iPhone からダウンロードできる？</div>
+      <div class="a">A. できません。CSV出力はパソコン専用の機能です。</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="q">Q. どの出力形式を選べばいい？</div>
+      <div class="a">A. <strong>「全項目（インボイス／適格請求書）」</strong>を選んでください。これだけがインボイス制度に対応しています。</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="q">Q. CSVファイルが文字化けする…</div>
+      <div class="a">A. Excelで開くときに文字コードを「UTF-8」に指定するか、Googleスプレッドシートで開いてみてください。</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="q">Q. 「反映遅れ分」「お問い合わせ分」って何？</div>
+      <div class="a">A. 決済時の通信エラーで処理が遅れた取引です。後から正しく処理・振込が完了しているので問題ありません。</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="q">Q. Airペイ QR の分も同じ方法で取得できる？</div>
+      <div class="a">A. はい、Airペイ QR 管理画面から同じ手順で取得できます。</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="q">Q. お客さんにインボイス対応の領収書を渡したい場合は？</div>
+      <div class="a">A. Airレジ（レジアプリ）と連携すれば、インボイス対応の領収書・レシートを発行できます。</div>
+    </div>
+  </div>
+
+  <!-- まとめ -->
+  <div class="summary">
+    <h2>手順のまとめ（5ステップ）</h2>
+    <div class="flow">
+      <span class="flow-step">① ログイン</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">② 振込明細を開く</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">③ 月を検索</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">④ CSV出力（インボイス形式）</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">⑤ ファイル確認・保管</span>
+    </div>
+  </div>
+
+  <!-- 問い合わせ -->
+  <div class="contact">
+    <h2>困ったときは？</h2>
+    <p><strong>Airペイ ヘルプデスク</strong></p>
+    <div class="phone">📞 0120-39-4861</div>
+    <p>受付時間：平日 9:30〜23:00（年末年始を除く）</p>
+  </div>
+
+  <!-- 参考リンク -->
+  <div class="links">
+    <h2>参考リンク集</h2>
+    <ul>
+      <li>📎 <a href="https://merchant.airpayment.jp/" target="_blank">Airペイ管理画面ログイン</a></li>
+      <li>📎 <a href="https://faq.airpayment.jp/hc/ja/articles/219670987" target="_blank">Airペイ FAQ - 振込明細の確認とCSV出力</a></li>
+      <li>📎 <a href="https://faq.airpayment.jp/hc/ja/articles/19157112265369" target="_blank">Airペイ FAQ - インボイス制度対応について</a></li>
+      <li>📎 <a href="https://faq.airpayment.jp/hc/ja/articles/19157193257497" target="_blank">Airペイ FAQ - レシートのインボイス対応について</a></li>
+      <li>📎 <a href="https://omisecash.com/airpay/invoice.html" target="_blank">エアペイでインボイスをダウンロードする方法（画像付き解説）</a></li>
+      <li>📎 <a href="https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice.htm" target="_blank">国税庁 - インボイス制度特集</a></li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    作成日：2026年2月13日<br>
+    この手順書は一般的な操作方法をまとめたものです。画面の表示は更新により変わる場合があります。<br>
+    最新情報は <a href="https://faq.airpayment.jp/" target="_blank">Airペイ公式FAQ</a> をご確認ください。
+  </div>
+
+</div>
+
+</body>
+</html>
